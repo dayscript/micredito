@@ -18,4 +18,15 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
+    Route::get('pse/beneficiary', function(){
+      return view('admin.beneficiary');
+    })->name('admin.pse.beneficiary');
 });
+
+Route::get('pse/beneficiary', function(){
+  return view('pse.beneficiary');
+})->name('pse.beneficiary');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
