@@ -8340,6 +8340,49 @@ button.close {
 .beneficiary-menu li {
   float: left;
   display: inline-block;
-  margin: 0 5px 0 0;
+  padding: 0 10px 0 10px;
+  background-color: #ff0200;
+  color: white;
+  border: solid 1px white;
+  text-align: center;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+h1,
+h2 {
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3 {
+  color: #CC0000;
+}
+
+.font-weight {
+  font-weight: 700;
+}
+
+.font-line-1 {
+  font-size: 15px;
+}
+
+.block {
+  display: block;
+}
+
+.background-gray {
+  background-color: #cacaca;
+  color: black;
+}
+
+.background-black {
+  background-color: black;
+  color: white;
+}
+
+.margin-bottom {
+  margin-bottom: 25px;
 }
 
