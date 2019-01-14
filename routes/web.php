@@ -19,13 +19,17 @@ Route::get('/', function () {
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
     Route::get('pse/beneficiary', function(){
-      return view('admin.beneficiary');
+      return view('admin.pse.beneficiary');
     })->name('admin.pse.beneficiary');
 });
 
 Route::get('pse/beneficiary', function(){
-  return view('pse.beneficiary');
-})->name('pse.beneficiary');
+  return view('public.pse.beneficiary');
+})->name('public.pse.beneficiary');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
 
 Auth::routes();
 
