@@ -42,7 +42,7 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
-                        @if (Auth::guest())
+                        {{-- @if (Auth::guest())
                             <li><a href="{{ route('login') }}">Login</a></li>
                             <li><a href="{{ route('register') }}">Register</a></li>
                         @else
@@ -65,12 +65,11 @@
                                     </li>
                                 </ul>
                             </li>
-                        @endif
+                        @endif --}}
                     </ul>
                 </div>
             </div>
         </nav>
-
         @yield('content')
     </div>
 
