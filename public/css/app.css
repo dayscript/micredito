@@ -8382,7 +8382,20 @@ h3 {
   color: white;
 }
 
+.background-red {
+  background-color: #ed1d25;
+  color: white;
+}
+
+.color-red {
+  color: red;
+}
+
 .margin-bottom {
   margin-bottom: 25px;
+}
+
+.margin-bottom-10 {
+  margin-bottom: 10px;
 }
 
