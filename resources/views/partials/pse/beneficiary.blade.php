@@ -196,7 +196,7 @@
                             <a class="nav-link" id="plan-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">PLAN DE PAGOS</a>
                           </li>
                         </ul>
-                        <div class="tab-content" id="myTabs">
+                        <div class="tab-content" id="tabsContent">
                           <div class="tab-pane fade show active" id="resumen" role="tabpanel" aria-labelledby="home-tab">asd</div>
                           <div class="tab-pane fade" id="extracto" role="tabpanel" aria-labelledby="profile-tab">dfg</div>
                           <div class="tab-pane fade" id="movimiento" role="tabpanel" aria-labelledby="contact-tab">ñlk</div>
