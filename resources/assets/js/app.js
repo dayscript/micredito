@@ -6,7 +6,7 @@
  */
 
 require('./bootstrap');
-
+ 
 
 
 window.Vue = require('vue');
@@ -28,7 +28,7 @@ const app = new Vue({
 });
 
 
-$('#tabs a').on('click', function (e) {
+$('#myTab a').on('click', function (e) {
     e.preventDefault()
     $(this).tab('show')
 })

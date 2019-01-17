@@ -182,7 +182,7 @@
                           </div>
                         </div>
 
-                        <ul class="nav nav-tabs" id="tabs" role="tablist">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
                           <li class="nav-item">
                             <a class="nav-link active" id="resumen-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">RESUMEN</a>
                           </li>
@@ -196,7 +196,7 @@
                             <a class="nav-link" id="plan-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">PLAN DE PAGOS</a>
                           </li>
                         </ul>
-                        <div class="tab-content" id="tabsContent">
+                        <div class="tab-content" id="myTabContent">
                           <div class="tab-pane fade show active" id="resumen" role="tabpanel" aria-labelledby="home-tab">asd</div>
                           <div class="tab-pane fade" id="extracto" role="tabpanel" aria-labelledby="profile-tab">dfg</div>
                           <div class="tab-pane fade" id="movimiento" role="tabpanel" aria-labelledby="contact-tab">ñlk</div>
