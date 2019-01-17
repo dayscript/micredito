@@ -18,19 +18,28 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
-    Route::get('pse/beneficiary', function(){
-      return view('admin.pse.beneficiary');
-    })->name('admin.pse.beneficiary');
+    Route::get('pse/beneficiary', 'BeneficiaryController@index')->name('admin.pse.beneficiary.index');
+
+    Route::get('devel', 'DevelController@index')->name('admin.devel.code');
+
 });
 
-Route::get('pse/beneficiary', function(){
-  return view('public.pse.beneficiary');
-})->name('public.pse.beneficiary');
+Route::group(['prefix'=>'pse'],function(){
+  Route::get('beneficiary', 'BeneficiaryController@index')->name('pse.beneficiary.index');
+  Route::get('beneficiary/{identification}', 'BeneficiaryController@load')->name('pse.beneficiary.load');
+
+
+
+});
+
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+
+
+
+
+

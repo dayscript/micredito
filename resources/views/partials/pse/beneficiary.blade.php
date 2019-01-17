@@ -27,43 +27,81 @@
                               </a>
                               <div class="row">
                                 <div class="info col-md-12 margin-bottom">
-                                  <h3 class="font-weight">Juan Alejandro Abadía Franco</h3>
-                                  <strong class="font-line-1">Maestría, Human Rights Law, University Of Kent</strong>
+                                  <h3 class="font-weight">{{ $beneficiary->personal->PER_NOMBRES }} {{ $beneficiary->personal->PER_APELLIDOS }}</h3>
+                                  <strong class="font-line-1">
+                                  {{ $beneficiary->beca->TES_TIPO_ESTUDIO}}, 
+                                  {{ $beneficiary->beca->PUNIV_PROGRAMA_UNIVERSITARIO}}, 
+                                  {{ $beneficiary->beca->UNI_UNIVERSIDAD}}
+                                  </strong>
                                   <div class="">
-                                    <strong>CC: </strong> <span>1032371488</span>
+                                    <strong>CC: </strong> <span>{{$beneficiary->identification}}</span>
                                   </div>
                                   <div class="">
-                                    <strong>Código: </strong> <span>1032371488</span>
+                                    <strong>Código: </strong> <span>{{$beneficiary->promo->BEN_CODIGO_GIRO}}</span>
                                   </div>
                                   <div class="">
-                                    <strong>Corte al: </strong> <span>1032371488</span>
+                                    <strong>Corte al: </strong> <span>
+                                    {{ $beneficiary->dataBeneficiario->LADTCPW }}
+                                    </span>
                                   </div>
                                   <div class="">
-                                    <strong>Estatus: </strong> <span>1032371488</span>
+                                    <strong>Estatus: </strong> <span>{{ $beneficiary->personal->EST_ESTADO}}</span>
+                                    <span>{{ $beneficiary->personal->EST_ESTADO_DESC }}</span>
                                   </div>
                                 </div>
                               </div>
                               <div class="row">
                                 <div class="col-md-12 margin-bottom">
                                   <div class="">
-                                      <div class=" col-md-8 block background-gray">
+                                      <div class=" col-md-7 block background-gray">
                                         <strong>SALDO DE DEUDA</strong>
                                       </div>
-                                      <div class="col-md-4 block background-black">
-                                         <strong>USD 25.001,92</strong>
+                                      <div class="col-md-5 block background-black">
+                                         <strong>USD {{ $beneficiary->dataBeneficiario->LMAMPOW }}</strong>
                                       </div>
                                   </div>
                                   <div class="">
-                                    <div class="col-md-8 block background-gray">
+                                    <div class="col-md-7 block background-gray">
                                       <strong>SALDO MENOS CONDONACION</strong>
                                     </div>
-                                    <div class="col-md-4 block background-black">
-                                      <strong>USD 25.001,92</strong>
+                                    <div class="col-md-5 block background-black">
+                                      <strong>USD {{ $beneficiary->dataBeneficiario->USU02}}</strong>
                                     </div>
-
                                   </div>
+
+                                  @if( $beneficiary->dataBeneficiario->LMNOPDW > 0 ) 
+                                  <div class="">
+                                    <div class="col-md-7 block background-gray">
+                                      <strong>MORA</strong>
+                                    </div>
+                                    <div class="col-md-3 block background-red" style="background:#ed1d25; color:white">
+                                      <strong>USD {{$beneficiary->dataBeneficiario->LMAMTPW}}</strong>
+                                    </div>
+                                    <div class="col-md-2"  style="color:red">
+                                      <strong> {{ $beneficiary->dataBeneficiario->LMNOPDW}} días</strong>
+                                    </div>
+                                   
+                                  </div>
+                                    @if(1==1)
+                                    <div class="">
+                                      <div class="col-md-7 block background-gray">
+                                        <strong>A PAGAR</strong>
+                                      </div>
+                                      <div class="col-md-5 block ">
+                                        <strong>USD {{$beneficiary->getCuotaTotal()}}</strong>
+                                      </div>
+                                    </div>
+                                    @endif
+                                  @endif
                                 </div>
                               </div>
+                              @if( 
+                                  $beneficiary->personal->EST_ESTADO != 'POE' ||
+                                  $beneficiary->personal->EST_ESTADO != 'JPC' ||
+                                  $beneficiary->personal->EST_ESTADO != 'JPS' ||
+                                  $beneficiary->personal->EST_ESTADO != 'JUR' ||
+                                  $beneficiary->personal->EST_ESTADO != 'CAS'
+                              )
                               <div class="row">
                                 <div class="col-md-12 margin-bottom">
                                   <p><strong><span>IMPORTANTE:</span> La fecha de corte de su extracto es diferente a la fecha calendario.
@@ -71,6 +109,7 @@
                                     ingrese a PSE y marque la opción "otro valor". </strong></p>
                                 </div>
                               </div>
+                              @endif
                             </div>
                             <div class="col-md-4">
                               
