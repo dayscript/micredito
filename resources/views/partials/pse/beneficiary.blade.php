@@ -183,7 +183,7 @@
                         </div>
 
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
-                          <li class="nav-item">
+                          <li class="nav-item active">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">RESUMEN</a>
                           </li>
                           <li class="nav-item">
