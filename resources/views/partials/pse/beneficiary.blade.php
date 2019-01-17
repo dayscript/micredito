@@ -198,7 +198,7 @@
                         </ul>
 
                         <div class="tab-content">
-                          <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
+                          <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">asdsad</div>
                           <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
                           <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">...</div>
                           <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">...</div>
