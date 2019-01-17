@@ -24,3 +24,9 @@ Vue.component('pse-beneficiary-payment', require('./components/pse/beneficiary/p
 const app = new Vue({
     el: '#app'
 });
+
+
+$('#myTab a').on('click', function (e) {
+    e.preventDefault()
+    $(this).tab('show')
+})

@@ -52,46 +52,44 @@
                               </div>
                               <div class="row">
                                 <div class="col-md-12 margin-bottom">
-                                  <div class="">
+                                  <div class="col-md-12 row margin-bottom-10">
                                       <div class=" col-md-7 block background-gray">
                                         <strong>SALDO DE DEUDA</strong>
                                       </div>
                                       <div class="col-md-5 block background-black">
-                                         <strong>USD {{ $beneficiary->dataBeneficiario->LMAMPOW }}</strong>
+                                         <strong>USD {{ number_format($beneficiary->dataBeneficiario->LMAMPOW, 2) }}</strong>
                                       </div>
                                   </div>
-                                  <div class="">
+                                  <div class="col-md-12 row margin-bottom-10">
                                     <div class="col-md-7 block background-gray">
                                       <strong>SALDO MENOS CONDONACION</strong>
                                     </div>
                                     <div class="col-md-5 block background-black">
-                                      <strong>USD {{ $beneficiary->dataBeneficiario->USU02}}</strong>
+                                      <strong>USD {{ number_format($beneficiary->dataBeneficiario->USU02, 2)}}</strong>
                                     </div>
                                   </div>
 
                                   @if( $beneficiary->dataBeneficiario->LMNOPDW > 0 ) 
-                                  <div class="">
+                                  <div class="col-md-12 row margin-bottom-10">
                                     <div class="col-md-7 block background-gray">
                                       <strong>MORA</strong>
                                     </div>
-                                    <div class="col-md-3 block background-red" style="background:#ed1d25; color:white">
-                                      <strong>USD {{$beneficiary->dataBeneficiario->LMAMTPW}}</strong>
+                                    <div class="col-md-5 block background-red">
+                                      <strong>USD {{number_format($beneficiary->dataBeneficiario->LMAMTPW, 2)}} - {{ $beneficiary->dataBeneficiario->LMNOPDW}} días</strong>
                                     </div>
-                                    <div class="col-md-2"  style="color:red">
-                                      <strong> {{ $beneficiary->dataBeneficiario->LMNOPDW}} días</strong>
-                                    </div>
-                                   
+                                    {{-- <div class="col-md-1 color-red">
+                                      <span> {{ $beneficiary->dataBeneficiario->LMNOPDW}} días</span>
+                                    </div> --}}
+                                    
                                   </div>
-                                    @if(1==1)
-                                    <div class="">
+                                    <div class="col-md-12 row margin-bottom-10">
                                       <div class="col-md-7 block background-gray">
                                         <strong>A PAGAR</strong>
                                       </div>
                                       <div class="col-md-5 block ">
-                                        <strong>USD {{$beneficiary->getCuotaTotal()}}</strong>
+                                        <strong>USD {{number_format($beneficiary->getCuotaTotal(), 2)}}</strong>
                                       </div>
                                     </div>
-                                    @endif
                                   @endif
                                 </div>
                               </div>
@@ -169,7 +167,37 @@
                           </div>
                         </div>
 
-                        <pse-beneficiary-credit-desciption></pse-beneficiary-credit-desciption>
+                        {{-- <pse-beneficiary-credit-desciption></pse-beneficiary-credit-desciption> --}}
+
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-md-12 row">
+                              <ul class="beneficiary-menu ">
+                                <li>RESUMEN</li>
+                                <li>EXTRACTO</li>
+                                <li>MOVIMIENTO</li>
+                                <li>PLAN DE PAGOS</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+                          </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">asd</div>
+                          <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">dfg</div>
+                          <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">ñlk</div>
+                        </div>
 
                       </div>
                     </div>
