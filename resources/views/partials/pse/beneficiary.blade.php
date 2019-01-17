@@ -184,19 +184,24 @@
 
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                           <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">RESUMEN</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">EXTRACTO</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+                            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">MOVIMIENTO</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="plan-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="plan" aria-selected="false">PLAN DE PAGOS</a>
                           </li>
                         </ul>
                         <div class="tab-content" id="myTabContent">
                           <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">asd</div>
                           <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">dfg</div>
                           <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">ñlk</div>
+                          <div class="tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">ñlk</div>
+
                         </div>
 
                       </div>
