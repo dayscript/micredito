@@ -32,7 +32,7 @@ class DevelController extends Controller
        $beneficiary->setIdentification('38566386');
        
        $beneficiary->getAll();
-       dd($beneficiary->getCuotaTotal());
+    //    dd($beneficiary->getCuotaTotal());
        dd($beneficiary);
     }
 }

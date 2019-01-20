@@ -110,10 +110,12 @@
                               @endif
                             </div>
                             <div class="col-md-4">
+{{-- 
+                              <pse-beneficiary-payment></pse-beneficiary-payment> --}}
 
-                              <pse-beneficiary-payment></pse-beneficiary-payment>
+                              @include('partials.pse.payment');
 
-                              <div class="row">
+                                <div class="row">
                                 <div class="pse-information col-md-12 margin-bottom">
                                   <div class="block_0info" id="block_0info">
                                     <div class="pmsg" style="display:none">
@@ -159,7 +161,7 @@
                           </div>
                         </div>
 
-                        <div class="container">
+                        <div class="col-md-12">
                           <div class="row">
                             <div class="col-md-12 row margin-bottom">
                               <a href="#"><strong>Pago en el exterior</strong></a>
@@ -169,47 +171,119 @@
 
                         {{-- <pse-beneficiary-credit-desciption></pse-beneficiary-credit-desciption> --}}
 
-                        <div class="container">
+                        <div class="col-md-12 row">
                           <div class="row">
                             <div class="col-md-12 row">
-                              <ul class="beneficiary-menu ">
-                                <li>RESUMEN</li>
-                                <li>EXTRACTO</li>
-                                <li>MOVIMIENTO</li>
-                                <li>PLAN DE PAGOS</li>
-                              </ul>
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item active">
+                                      <a class="nav-link active" id="resumen-tab" data-toggle="tab" href="#resumen" role="tab" aria-controls="resumen" aria-selected="true">RESUMEN</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" id="extracto-tab" data-toggle="tab" href="#extracto" role="tab" aria-controls="extracto" aria-selected="false">EXTRACTO</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" id="movimiento-tab" data-toggle="tab" href="#movimiento" role="tab" aria-controls="movimiento" aria-selected="false">MOVIMIENTO</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" id="plan-tab" data-toggle="tab" href="#plan" role="tab" aria-controls="plan" aria-selected="false">PLAN DE PAGOS</a>
+                                    </li>
+                                  </ul>
+          
+                                  <div class="tab-content">
+                                    <div class="tab-pane active" id="resumen" role="tabpanel" aria-labelledby="resumen-tab">
+
+                                      <h2>Crédito-beca (PCB)</h2>
+
+                                      <div class="col-md-12">
+                                          <div class="col-md-4">Condiciones PCB</div>
+                                          <div class="col-md-2">
+                                              <span>Condonación</span>
+                                              <span>50%</span>
+                                          </div>
+                                          <div class="col-md-2">
+                                              <span>Promoción</span>
+                                              <span>2015</span>
+                                          </div>
+                                          <div class="col-md-2">
+                                              <span>Inicio de Pagos</span>
+                                              <span>10-oct-17</span>
+                                          </div>    
+                                          <div class="col-md-2">
+                                              <span>Fin Pagos</span>
+                                              <span>10-oct-22</span>
+                                          </div>
+                                      </div>
+
+                                      <div class="col-md-12">
+                                          <div class="col-md-4">Interés</div>
+                                          <div class="col-md-2">
+                                              <span>Libor (promedio Últimos 3 meses)</span>
+                                              <span>3.06% anual</span>
+                                          </div>
+                                          <div class="col-md-2">
+                                              <span>Interés</span>
+                                              <span>Lib +8 = 11.06% anual</span>
+                                          </div>
+                                          <div class="col-md-2">
+                                              <span>Mora</span>
+                                              <span>22.5% anual</span>
+                                          </div>    
+                                          <div class="col-md-2">
+                                              <span>Seguro</span>
+                                              <span>0,30% anual</span>
+                                          </div>
+                                      </div>
+
+                                      <h2>Estatus</h2>
+
+                                      <div class="col-md-12">
+                                        <table class="table">
+                                          <thead>
+                                            <tr>
+                                              <th scope="col"></th>
+                                              <th scope="col">Inicio</th>
+                                              <th scope="col">Fin</th>
+                                              <th scope="col">Meses</th>
+                                              <th scope="col">Interés</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td scope="row">asdasdasdasdasdasdadasdsadasdas</td>
+                                              <td>Mark</td>
+                                              <td>Otto</td>
+                                              <td>@mdo</td>
+                                              <td>@mdo</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      <div class="col-md-12">
+                                        <strong>
+                                        Si tiene alguna duda en su estado de cuenta puede contactar a cartera@colfuturo.org 
+                                        Cualquier inconsistencia favor informar a nuestros Revisores Fiscales Holl & Holl International Ltda. e-mail: holl@hollinternational.com
+                                        </strong>
+                                      </div>
+                                    </div>
+                                    <div class="tab-pane" id="extracto" role="tabpanel" aria-labelledby="extracto-tab">...</div>
+                                    <div class="tab-pane" id="movimiento" role="tabpanel" aria-labelledby="movimiento-tab">...</div>
+                                    <div class="tab-pane" id="plan" role="tabpanel" aria-labelledby="plan-tab">...</div>
+                                  </div>
                             </div>
                           </div>
                         </div>
 
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                          <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">RESUMEN</a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">EXTRACTO</a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages" aria-selected="false">MOVIMIENTO</a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">PLAN DE PAGOS</a>
-                          </li>
-                        </ul>
-
-                        <div class="tab-content">
-                          <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">asdsad</div>
-                          <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-                          <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">...</div>
-                          <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">...</div>
-                        </div>
-
                         <script>
-                          $(function () {
-                            $('#myTab li:last-child a').tab('show')
+                          jQuery(function () {
+                            jQuery('#myTab li:last-child a').tab('show')
                           })
-                        </script>
 
+                          jQuery(document).ready(function(){
+                              console.log('OK');
+                          });
+                            
+                        </script>
+                        
                       </div>
                     </div>
                     </div>
