@@ -24,7 +24,7 @@
             <div class="col-md-3">
                 <strong>CC:</strong>
                 <span>{{$beneficiary->identification}}</span>
-            </div>
+            </div> 
             <div class="col-md-4">
                 <strong>CÓDIGO:</strong>
             <span>{{$beneficiary->promo->BEN_CODIGO_GIRO}}</span>
@@ -37,7 +37,7 @@
             <div class="col-md-12 corte"><p>Corte al: {{$beneficiary->dataBeneficiario->LADTCPW}} </p></div>
 
             <div class="col-md-12 margin-top">
-                {!! Form::open(['url' => 'foo/bar']) !!}
+                {!! Form::open(['url' => 'foo/bar','id' => 'payment']) !!}
                 <div class="col-md-12">
                 <div class="col-md-6">
                     {{  Form::radio('opt_pay', 'COL',['checked'],['id'=>'opt_pay_col']) }}
@@ -46,29 +46,31 @@
                     <span class="nota">* Incluye la cuota actual y los valores en mora</span>
                     @endif
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 text-right">
                     {{  Form::label('COP', 'COP 6.687.098,00', ['class' => 'awesome'])}}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 text-right">
                     {{  Form::label('USD', 'USD 2.129,52', ['class' => 'awesome'])}}
                 </div>
                 </div>
                 <div class="col-md-12">
 
                 <div class="col-md-6">
-                    {{ Form::radio('opt_pay', 'OTR', false, ['id'=>'opt_pay_otr']) }}
+                    {{  Form::radio('opt_pay', 'OTR', false, ['id'=>'opt_pay_otr']) }}
                     {{  Form::label('Otro valor','Otro valor')}}
 
                 </div>
                 
-                <div class="col-md-3">
+                <div class="col-md-3 text-right">
                     {{ Form::label('COP', 'COP') }}
-                    {{ Form::text('COP','',['size'=>'10']) }}
+                    {{ Form::text('COP','',['size'=>'10','id'=>'input_cop','name'=>'input_cop']) }}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 text-right">
                     {{ Form::label('USD', 'USD') }}
-                    {{ Form::text('USD','',['size'=>'10']) }}
+                    {{ Form::text('USD','',['size'=>'10','id'=>'input_usd','name'=>'input_usd']) }}
                 </div>
+
+                {{ Form::hidden('trm', \App\Pse\Pse::trm(),['id'=>'trm'] ) }}
 
                 <div class="pay">
                     {{ Form::submit('PAGAR',['class' => 'btn-pse']) }}

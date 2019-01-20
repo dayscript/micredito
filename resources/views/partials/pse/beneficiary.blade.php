@@ -90,7 +90,7 @@
                                         <strong>USD {{number_format($beneficiary->getCuotaTotal(), 2)}}</strong>
                                       </div>
                                     </div>
-                                  @endif
+                                  @endif 
                                 </div>
                               </div>
                               @if(
@@ -272,18 +272,6 @@
                             </div>
                           </div>
                         </div>
-
-                        <script>
-                          jQuery(function () {
-                            jQuery('#myTab li:last-child a').tab('show')
-                          })
-
-                          jQuery(document).ready(function(){
-                              console.log('OK');
-                          });
-                            
-                        </script>
-                        
                       </div>
                     </div>
                     </div>
