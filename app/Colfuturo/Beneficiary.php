@@ -3,6 +3,7 @@
 namespace App\Colfuturo;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Pse\Pse;
 use Carbon\Carbon;
 
 class Beneficiary
@@ -29,7 +30,7 @@ class Beneficiary
     *
     */
  
-    public function execute($sql){
+    public function odbcExecute($sql){
         $conn = odbc_connect("ColfuturoPLI", "pli", "qvwXkY8D") or die ( odbc_errormsg() );
         $result = odbc_exec ($conn, $sql);
         $return 	= odbc_fetch_array ($result);
@@ -42,10 +43,25 @@ class Beneficiary
     *
     *
     */
+
+    public function mysqlExecute($sql, $id = false){
+        
+        $dataBase = mysqli_connect( 'ns11.colfuturo.org',  'micredito',  'Cre2014Col','colfuturo' );        
+        $result = mysqli_query( $dataBase, $sql );
+        return mysqli_fetch_assoc($result);
+    }
+
+
+
+    /*
+    *
+    *
+    */
     public function getPersonal(){
 
         $sql = "SELECT per.PER_NUMERO_DOCUMENTO,
                 BEN.BEN_CODIGO,
+                ipe.PIPER_EMAIL as PER_CORREO_ELECTRONICO,
                 cnf_est.CEST_NOMBRE_LARGO as EST_ESTADO_DESC,
                 cnf_est.CEST_NOMBRE_CORTO as EST_ESTADO,
                 ben_est.BESTA_FECHA_INICIO as EST_FECHA_INICIO,
@@ -55,11 +71,16 @@ class Beneficiary
                 ben_his_con_max.BEN_PORC_TIPO_COND,
                 ben_his_con_max.BEN_PORC_CONDONACION,
                 per.PER_NOMBRES,
-                per.PER_APELLIDOS
+                per.PER_APELLIDOS,
+                PER.PER_CODIGO,
+                dom.DOM_TELEFONO as RES_TELEFONO
                 FROM PLI.PERSONA per
                 JOIN PLI.PLIS_BENEFICIARIO ben ON per.PER_CODIGO = ben.PER_CODIGO
+                JOIN PLI.PLI_PERSONA_INFO_PERSONAL	ipe	on PER.PER_CODIGO = ipe.PER_CODIGO
                 JOIN PLI.PLIS_BENEFICIARIO_ESTATUS ben_est ON ben.BEN_CODIGO = ben_est.BEN_CODIGO
                 JOIN PLI.PLI_CNF_ESTATUS cnf_est ON ben_est.CEST_CODIGO = cnf_est.CEST_CODIGO
+                JOIN PLI.PLIS_BENEFICIARIO_DOMICILIO bd	on bd.BEN_CODIGO = ben.BEN_CODIGO
+                JOIN PLI.DOMICILIO dom on dom.DOM_CODIGO	= bd.DOM_CODIGO
                 LEFT JOIN (
                         SELECT tmp1_ben_his_con.BENCOND_CODIGO,
                                 tmp1_ben_his_con.BEN_CODIGO,
@@ -79,7 +100,7 @@ class Beneficiary
                 WHERE PER.PER_NUMERO_DOCUMENTO = '".$this->identification."'  AND ben_est.BESTA_ESTADO_ACTIVO = 1  AND ben.BEN_CODIGO_GIRO = '".$this->promo->BEN_CODIGO_GIRO."'
                 ORDER BY EST_FECHA_FIN DESC";
         
-        $this->personal = self::parseToUtf((object)$this->execute($sql));
+        $this->personal = self::parseToUtf((object)$this->odbcExecute($sql));
 
     }
 
@@ -101,7 +122,7 @@ class Beneficiary
 				INNER JOIN PLI.UNIVERSIDAD ON PLI.PLIS_BENEFICIARIO_PROYECTO_ACADEMICO.UNI_CODIGO = PLI.UNIVERSIDAD.UNI_CODIGO
 			    WHERE (((PLI.PERSONA.PER_NUMERO_DOCUMENTO)='" . $this->identification . "') AND PLI.PLIS_BENEFICIARIO.BEN_CODIGO_GIRO = '" . $this->promo->BEN_CODIGO_GIRO . "')";
 
-        $this->beca = self::parseToUtf((object)$this->execute($sql));
+        $this->beca = self::parseToUtf((object)$this->odbcExecute($sql));
     }
 
 
@@ -122,7 +143,7 @@ class Beneficiary
                 GROUP BY PLI.PERSONA.PER_NUMERO_DOCUMENTO
                 HAVING (((PLI.PERSONA.PER_NUMERO_DOCUMENTO)='" . $this->identification . "'))";
         
-        $this->promo =  self::parseToUtf((object)$this->execute($sql));
+        $this->promo =  self::parseToUtf((object)$this->odbcExecute($sql));
     
     }
 
@@ -319,17 +340,13 @@ class Beneficiary
     */
     function getAbonos( )	{
 
-        $dateCourt = $this->dataBeneficiario->LADTCPW;
-        $dataBase = mysqli_connect( 'ns11.colfuturo.org',  'micredito',  'Cre2014Col','colfuturo' );
-
-		$sql = "SELECT SUM(VALOR_PAGADO_USD) AS TOTAL_ABONADO
+        $sql = "SELECT SUM(VALOR_PAGADO_USD) AS TOTAL_ABONADO
                 FROM PSE_transactions
                 WHERE PER_NUMERO_DOCUMENTO = " . $this->dataBeneficiario->CNNOSSW .
-                " AND FECHA_REGISTRO >= '".$dateCourt."'";
+                " AND FECHA_REGISTRO >= '".$this->dataBeneficiario->LADTCPW ."'";
 
-		$result = mysqli_query( $dataBase, $sql );
-        $at_valor = mysqli_fetch_assoc($result);
-        
+		$at_valor = self::mysqlExecute($sql);
+
 		return $at_valor['TOTAL_ABONADO'];
 
     }
@@ -339,7 +356,7 @@ class Beneficiary
     *
     *
     */
-    function getCuotaTotal( )	{
+    public function getCuotaTotal( )	{
 
 		$mora = self::getMora( );
 		$cuota_final = self::getCuota( );
@@ -352,7 +369,381 @@ class Beneficiary
 		
 		return $cuota_final;
 
-	}
+    }
+
+    /*
+    *
+    *
+    */
+
+    public function getCuotaTotalCop(){
+        return self::getCuotaTotal() * Pse::trm();
+    }
+    
+
+
+    /*
+    *
+    *
+    */
+    public function createAttemptPay(){
+
+        $becario['EST_CODIGO'] = 0;
+        $becario['RES_CELULAR'] = str_replace(' ', '', $this->personal->RES_TELEFONO);
+        $becario['RES_TELEFONO'] = str_replace(' ', '', $this->personal->RES_TELEFONO);
+        $trm = str_replace(',','',Pse::trm());
+        $sql = "INSERT INTO `PSE_attempts` ( `PER_NUMERO_DOCUMENTO`,`PER_NOMBRES`,`PER_APELLIDOS`, `PER_CORREO_ELECTRONICO`,
+                `PER_CORREO_ELECTRONICO2`, `RES_TELEFONO`, `RES_CELULAR`,`BEN_CODIGO_GIRO`, `EST_CODIGO`, `EST_ESTADO`,
+                `VALOR_COLFUTURO`,`VALOR_PAGADO_COP`,`VALOR_PAGADO_USD`,`VALOR_IVA`,`VALOR_TIPO`,`VALOR_TRM`, `FECHA_ESTADO`,
+                `ESTADO`, `FECHA_REGISTRO`, `IP` ) VALUES (
+                '" . $this->promo->PER_NUMERO_DOCUMENTO  . "',
+                '" . $this->personal->PER_NOMBRES  . "',
+                '" . $this->personal->PER_APELLIDOS  . "',
+                '" . $this->personal->PER_CORREO_ELECTRONICO  . "',
+                '" . $this->personal->PER_CORREO_ELECTRONICO  . "',
+                '" . $becario['RES_TELEFONO']  . "',
+                '" . $becario['RES_CELULAR']  . "',
+                '" . $this->personal->BEN_CODIGO_GIRO  . "',
+                '" . $becario['EST_CODIGO']  . "',
+                '" . $this->personal->EST_ESTADO  . "',
+                '" . $this->cuota . "',
+                '" . $this->paymentCOP . "',
+                '" . $this->paymentUSD . "',
+                '" . "0" . "',
+                '" . $this->type . "',
+                '" . $trm . "',
+                NOW( ),
+                'CREATE',
+                NOW( ),
+                '" . $_SERVER['REMOTE_ADDR'] . "'
+                    )";
+        
+        $dataBase = mysqli_connect( 'ns11.colfuturo.org',  'micredito',  'Cre2014Col','colfuturo' );        
+        $result = mysqli_query( $dataBase, $sql );
+        $this->id_attempt = mysqli_insert_id($dataBase);
+        return $this->id_attempt;
+    
+    }
+
+
+    public function initAttemptPay($PaymentIdentifier){
+            $sql = "INSERT INTO PSE_states ( ID_PSE_ATTEMPT, ESTADO, ESTADO_PAGO, ID_FORMA_PAGO,
+                            VALOR_PAGADO, TICKETID, ID_CLAVE, ID_CLIENTE, FRANQUICIA,
+                            COD_APROBACION, CODIGO_SERVICIO, CODIGO_BANCO,
+                            NOMBRE_BANCO, CODIGO_TRANSACCION, CICLO_TRANSACCION,
+                            CAMPO1, CAMPO2, CAMPO3, FECHA,
+                            ERROR, ERROR_MSG, FECHA_REGISTRO ) VALUES (
+                    '" . $this->id_attempt . "',
+                    'INIT',
+                    '-3',
+                    '0',
+                    '" . $this->paymentCOP . "',
+                    '0',
+                    '0',
+                    '0',
+                    '0',
+                    '0',
+                    '0',
+                    '0',
+                    '0',
+                    '0',
+                    '0',
+                    '" . $_SERVER['REMOTE_ADDR'] . "',
+                    '" . 'CC' . "',
+                    '" . $this->identification . "',
+                    " . "NOW()" . ",
+                    0,
+                    '0',
+                    NOW() ) ";
+            $dataBase = mysqli_connect( 'ns11.colfuturo.org',  'micredito',  'Cre2014Col','colfuturo' );        
+            $result = mysqli_query( $dataBase, $sql );
+
+            $sql = "UPDATE `PSE_attempts` SET `ESTADO` = 'INIT', `ID_PSE` = '" . $PaymentIdentifier . "' WHERE ID_PSE_ATTEMPT = " . $this->id_attempt;
+
+            $result = mysqli_query( $dataBase, $sql );
+    }
+
+    /*
+    *
+    *
+    */
+
+    public function updateAttemptState($status, $attempt){
+
+        // if($status->State == "OK") {
+        //     $stateName = 'APPROVED';
+        // } else if($status->State == "PENDING"){
+        //     $stateName = 'PENDING';
+        // } else if($status->State == "NOT_AUTHORIZED"){
+        //     $stateName = 'REJECTED';
+        // } else if($status->State == "FAILED"){
+        //     $stateName = 'FAILED';
+        // } else {
+        //     $stateName = "UNKNOWN";
+        // }ESTADO_PAGO ='" . $status->State . "',
+
+
+        $sql =  "UPDATE PSE_states
+                SET ESTADO ='" . $status->State . "',
+                ID_FORMA_PAGO ='29',
+                VALOR_PAGADO = '" . $status->Amount . "',
+                TICKETID ='',
+                ID_CLAVE ='123',
+                ID_CLIENTE ='" . $status->Reference3 . "',
+                FRANQUICIA ='',
+                COD_APROBACION = '0',
+                CODIGO_SERVICIO ='" . $status->ServiceCode . "',     
+                CODIGO_BANCO ='" . $status->BankCode . "',  
+                NOMBRE_BANCO ='" . $status->BankName . "',  
+                CODIGO_TRANSACCION ='" . $status->TrazabilityCode . "',    
+                CICLO_TRANSACCION ='" . $status->CycleNumber . "', 
+                CAMPO1 ='" . $status->Reference1 . "',    
+                CAMPO2 ='" . $status->Reference2 . "',    
+                CAMPO3 ='" . $status->Reference3 . "',    
+                FECHA ='" . $status->SolicitedDate . "', 
+                ERROR ='0',
+                ERROR_MSG ='" . $status->ErrorMessage . "',
+                FECHA_REGISTRO = NOW()
+                WHERE ID_PSE_ATTEMPT =" . $attempt;
+    
+            $dataBase = mysqli_connect( 'ns11.colfuturo.org',  'micredito',  'Cre2014Col','colfuturo' );        
+            $result = mysqli_query( $dataBase, $sql );
+            
+            $sql = "UPDATE PSE_attempts
+                    SET ESTADO = '" . $status->State . "', FECHA_ESTADO = NOW( )
+                    WHERE ID_PSE_ATTEMPT = " . $attempt;
+
+            $result = mysqli_query( $dataBase, $sql );
+    }
+
+    /*
+    *
+    *
+    */
+    public function getAttemps(){
+            $attempts = [];
+            $sql = "SELECT ID_PSE_ATTEMPT, ESTADO 
+                    FROM PSE_attempts
+                    WHERE  PER_NUMERO_DOCUMENTO = " . $this->identification . " 
+                    ORDER BY FECHA_ESTADO ASC";
+            $dataBase = mysqli_connect( 'ns11.colfuturo.org',  'micredito',  'Cre2014Col','colfuturo' );        
+            $result = mysqli_query( $dataBase, $sql );
+            while ($obj = mysqli_fetch_object($result)) {
+                $attempts [] = $obj;
+            }
+            return $attempts;
+    }
+
+
+
+    public function canPay(){
+        $sql = "SELECT COUNT(*) AS total, ID_PSE_ATTEMPT, ESTADO, ( SELECT CODIGO_TRANSACCION
+                FROM PSE_states
+                WHERE PSE_states.ID_PSE_ATTEMPT = PSE_attempts.ID_PSE_ATTEMPT LIMIT 1 ) 
+                AS CODIGO_TRANSACCION
+                FROM PSE_attempts
+                WHERE PER_NUMERO_DOCUMENTO = '" . $this->identification . "'
+                AND ( ESTADO = 'BANK_WAIT' OR ESTADO = 'INIT' ) ";
+    
+        $dataBase = mysqli_connect( 'ns11.colfuturo.org',  'micredito',  'Cre2014Col','colfuturo' );        
+        $result = mysqli_query( $dataBase, $sql );
+        $result = mysqli_fetch_object($result);
+        return $result;
+    }
+
+
+    /*
+    *
+    *
+    */
+
+    public function setCuota($value){
+
+        $this->cuota = $value;
+    }
+    
+    /*
+    *
+    *
+    */
+
+    public function setPaymentCOP($value){
+
+        $this->paymentCOP = $value;
+    }
+    
+    /*
+    *
+    *
+    */
+
+    public function setPaymentUSD($value){
+
+        $this->paymentUSD = $value;
+    }
+    
+    /*
+    *
+    *
+    */
+
+    public function setType($value){
+        
+        $this->type = $value;
+    }
+   
+    public function tasaPorPromocion ( $promo = null, $estado = null )	{
+        /*
+        Promoción | POE, PEE, PPT, PGO, PGF, PDR, PDF, PGE | SUR, SUS | PAO, PRC, PDP, PGP | PAAF, PAAC
+        1992	Lib + 2	0%	0%	Lib + 2
+        1993	Lib + 2	0%	0%	Lib + 2
+        1994	Lib + 2	0%	0%	Lib + 2
+        1995	Lib + 2	0%	4%	Lib + 2
+        1996	Lib + 2	0%	4%	Lib + 2
+        1997	Lib + 2	0%	4%	Lib + 2
+        1998	Lib + 2	0%	4%	Lib + 8
+        1999	Lib + 2	0%	4%	Lib + 8
+        2000	Lib + 2	0%	4%	Lib + 8
+        2001	Lib + 2	0%	4%	Lib + 8
+        2002	Lib + 2	0%	4%	Lib + 8
+        2003	Lib + 2	0%	4%	Lib + 8
+        2004	Lib + 2	0%	Lib + 3	Lib + 8
+        2005	Lib + 2	0%	Lib + 3	Lib + 8
+        2006	Lib + 2	0%	Lib + 3	Lib + 8
+        2007	Lib + 2	0%	Lib + 3	Lib + 8
+        2008	Lib + 2	0%	Lib + 3	Lib + 8
+        2009	Lib + 2	0%	Lib + 3	Lib + 8
+        2010	Lib + 2	0%	Lib + 3	Lib + 8
+        2011	5%		0%	6%		13%
+        */
+        
+        $promo  = ( is_null($promo) )  ? $this->promo->BEN_PROMOCION:$promo;
+        $estado = ( is_null($estado) ) ? $this->personal->EST_ESTADO:$promo;
+
+        $data = array( 'type' => '%', 'value' => 0 );
+        $promo = (int)$promo;
+        $estado = strtoupper( trim( $estado ) );
+
+        if( $promo >= 1992 )	{
+            if( in_array( $estado, array( 'POE', 'PEE', 'PPT', 'PGO', 'PGF', 'PDR', 'PDF', 'PGE', 'PDP', 'PGP' ) ) )	{
+                if( $promo <= 2010 )	{
+                    $data = array( 'type' => 'Lib', 'value' => 2 );
+                }
+                else if( $promo <= 2012 )	{
+                    $data = array( 'type' => '%', 'value' => 5 );
+                }
+
+                else if( $promo <= 2013 )	{
+                    $data = array( 'type' => '%', 'value' => 6 );
+                }
+
+                else if( $promo <= 2014 )	{
+                    $data = array( 'type' => '%', 'value' => 7 );
+                }
+
+                else if( $promo <= 2015 )	{
+                    $data = array( 'type' => '%', 'value' => 7 );
+                }
+                else if( $promo <= 2017 )	{
+                    $data = array( 'type' => '%', 'value' => 7 );
+                }
+
+
+            }
+            else if( in_array( $estado, array( 'SUR', 'SUS' ) ) )	{
+                $data = array( 'type' => '%', 'value' => 0 );
+            }
+            else if( in_array( $estado, array( 'PAO', 'PRC','PAEP' ) ) )	{
+                if( $promo <= 1994 )	{
+                    $data = array( 'type' => '%', 'value' => 0 );
+                }
+                else if( $promo <= 2003 )	{
+                    $data = array( 'type' => '%', 'value' => 4 );
+                }
+                else if( $promo <= 2010 )	{
+                    $data = array( 'type' => 'Lib', 'value' => 3 );
+                }
+                else if( $promo <= 2012 )	{
+                    $data = array( 'type' => '%', 'value' => 6 );
+                }
+
+                else if( $promo <= 2013 )	{
+                    $data = array( 'type' => '%', 'value' => 8 );
+                }
+
+                else if( $promo <= 2014 )	{
+                    $data = array( 'type' => '%', 'value' => 9 );
+                }
+                else if( $promo <= 2015 )	{
+                    $data = array( 'type' => '%', 'value' => 9 );
+                }
+                else if( $promo <= 2017 )	{
+                    $data = array( 'type' => '%', 'value' => 9 );
+                }
+
+
+            }
+    //		else if( in_array( $estado, array( 'PAAS', 'PAAC' ) ) )	{
+            else if( in_array( $estado, array( 'PAEC', 'PAES'  ) ) )	{
+                if( $promo <= 1997 )	{
+                    $data = array( 'type' => 'Lib', 'value' => 2 );
+                }
+                else if( $promo <= 2010 )	{
+                    $data = array( 'type' => 'Lib', 'value' => 8 );
+                }
+                else if( $promo <= 2012 )	{
+                    $data = array( 'type' => '%', 'value' => 13 );
+                }
+                else if( $promo <= 2013 )	{
+                    $data = array( 'type' => '%', 'value' => 13 );
+                }
+                else if( $promo <= 2014)	{
+                    $data = array( 'type' => '%', 'value' => 15 );
+                }
+                else if( $promo <= 2015)	{
+                    $data = array( 'type' => '%', 'value' => 15 );
+                }
+                else if( $promo <= 2017)	{
+                    $data = array( 'type' => '%', 'value' => 15 );
+                }
+            }
+        }
+
+        switch( $data['type'] )	{
+            case 'Lib':
+                $data['txt'] = $data['type'] . ' ' . ( (int)$data['value'] >= 0 ? '+' : '-' ) . $data['value'];
+                break;
+            default:
+                $data['txt'] = $data['value'] . $data['type'];
+        }
+
+        return $data;
+
+    } 
+    
+    public function calcIntereses(){
+
+        $interes = $this->tasaPorPromocion()['type'] == 'Lib' ? 'Libor (promedio últimos 3 meses)':'Tasa Fija';
+        $lib_v = ($this->dataBeneficiario->LMRTNMW * 100 ) - ($this->tasaPorPromocion()['type'] == 'Lib' ? $this->tasaPorPromocion()['value']:0 );
+        
+        //  $EstadoL=array("PDP"=>"1","PGP"=>"1");
+        $Becario_libor= isset($EstadoL[strtoupper( $this->personal->EST_ESTADO )])? "mas2" : "";
+					
+        if ($Becario_libor == "mas2"){
+            $libor_t="libor + 2 ";
+            $libor_a= ( $lib_v + 2 );
+        }else { 
+            $libor_a= $this->dataBeneficiario->LMRTNMW * 100 ;
+            // $libor_t=( $values['type'] == 'Lib' ? $values['txt'] . ' ' : '' );
+        }
+
+
+        return [
+                'interes'=>$interes,
+                'lib_v'=> $lib_v,
+            ];
+
+    }
 
 
     

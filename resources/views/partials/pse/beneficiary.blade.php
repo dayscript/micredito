@@ -3,9 +3,9 @@
   @section('content')
   <div class="container">
       <div class="row">
-          <div class="col-md-8 col-md-offset-2">
+          <div class="">
               <div class="panel panel-default">
-                  <div class="panel-heading"><h2>beneficiary</h2></div>
+                  <div class="panel-heading"><h2>Mi Crédito</h2></div>
 
                   <div class="panel-body">
                       @if (session('status'))
@@ -46,7 +46,7 @@
                                   </div>
                                   <div class="">
                                     <strong>Estatus: </strong> <span>{{ $beneficiary->personal->EST_ESTADO}}</span>
-                                    <span>{{ $beneficiary->personal->EST_ESTADO_DESC }}</span>
+                                    <a class="interrogation" title="{{ $beneficiary->personal->EST_ESTADO_DESC }}"></a>
                                   </div>
                                 </div>
                               </div>
@@ -194,46 +194,62 @@
 
                                       <h2>Crédito-beca (PCB)</h2>
 
-                                      <div class="col-md-12">
-                                          <div class="col-md-4">Condiciones PCB</div>
-                                          <div class="col-md-2">
-                                              <span>Condonación</span>
-                                              <span>50%</span>
-                                          </div>
-                                          <div class="col-md-2">
-                                              <span>Promoción</span>
-                                              <span>2015</span>
-                                          </div>
-                                          <div class="col-md-2">
-                                              <span>Inicio de Pagos</span>
-                                              <span>10-oct-17</span>
-                                          </div>    
-                                          <div class="col-md-2">
-                                              <span>Fin Pagos</span>
-                                              <span>10-oct-22</span>
-                                          </div>
-                                      </div>
-
-                                      <div class="col-md-12">
-                                          <div class="col-md-4">Interés</div>
-                                          <div class="col-md-2">
-                                              <span>Libor (promedio Últimos 3 meses)</span>
-                                              <span>3.06% anual</span>
-                                          </div>
-                                          <div class="col-md-2">
+                                      <table class="table">
+                                        <thead class="thead-dark">
+                                          <tr>
+                                            <th scope="col"> </th>
+                                            <th scope="col">Condonación</th>
+                                            <th scope="col">Promoción</th>
+                                            <th scope="col">Inicio de Pagos</th>
+                                            <th scope="col">Fin Pagos</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <th scope="row">Condiciones PCB</th>
+                                            <td>{{ $beneficiary->personal->BEN_PORC_CONDONACION }}% </td>
+                                            <td>{{ $beneficiary->promo->BEN_PROMOCION }} </td>
+                                            {{-- valida si es interno --}}
+                                            @if( 1==2 ) 
+                                              <td>{{ $beneficiary->dataBeneficiario->LMDTNTW }}</td>
+                                              <td>{{ $beneficiary->dataBeneficiario->LMDTMTW }}</td>
+                                            @else
+                                              <td></td>
+                                              <td></td>
+                                            @endif
+                                            {{-- valida si es interno --}}
+                                          </tr>
+                                          <tr>
+                                            <th scope="row">Interés</th>
+                                            <td>
                                               <span>Interés</span>
-                                              <span>Lib +8 = 11.06% anual</span>
-                                          </div>
-                                          <div class="col-md-2">
+                                              <br>
+                                              <span>
+                                              {{ $beneficiary->calcIntereses()['interes'] }}
+                                              <br>
+                                              {{ $beneficiary->calcIntereses()['lib_v'] }} % anual
+                                              {{-- Lib +8 = 11.06% anual --}}
+                                              </span>
+                                            </td>
+                                            <td>
                                               <span>Mora</span>
+                                              <br>
                                               <span>22.5% anual</span>
-                                          </div>    
-                                          <div class="col-md-2">
+                                            </td>
+                                            <td>
                                               <span>Seguro</span>
+                                              <br>
                                               <span>0,30% anual</span>
-                                          </div>
-                                      </div>
-
+                                            </td>
+                                            <td>
+                                              <span>Seguro</span>
+                                              <br>
+                                              <span>0,30% anual</span>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                      
                                       <h2>Estatus</h2>
 
                                       <div class="col-md-12">
@@ -276,6 +292,14 @@
                     </div>
                     </div>
                   </div>
+                  @if (isset($status))
+                    @include('partials.pse.attempt');    
+                  @endif
+
+                  @if (isset($e))
+                    @include('partials.pse.error');    
+                  @endif
+                  
               </div>
           </div>
       </div>

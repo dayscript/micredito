@@ -27,8 +27,9 @@ Route::group(['prefix' => 'admin'], function () {
 Route::group(['prefix'=>'pse'],function(){
   Route::get('beneficiary', 'BeneficiaryController@index')->name('pse.beneficiary.index');
   Route::get('beneficiary/{identification}', 'BeneficiaryController@load')->name('pse.beneficiary.load');
-
-
+  Route::post('beneficiary/{identification}/pay', 'PseController@pay')->name('pse.beneficiary.pay');
+  Route::get('beneficiary/{identification}/callback/{attempt}', 'PseController@callBack')->name('pse.beneficiary.callback');
+  Route::get('transaction/{identification}/{attempt}/status', 'PseController@transactionStatus')->name('pse.transaction.status');
 
 });
 

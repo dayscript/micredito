@@ -30,6 +30,7 @@ class BeneficiaryController extends Controller
         $beneficiary->setIdentification($identification);
         $beneficiary->getAll();
         
+               
 
         return view('public.pse.beneficiary', compact('beneficiary'));
 

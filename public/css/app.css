@@ -8479,7 +8479,7 @@ h3 {
 }
 
 .btn-pse {
-  background-image: url("https://micredito.colfuturo.org/micredito2014/images/btn_pagar.jpg");
+  background-image: url("/ach/images/btn_pagar.jpg");
   /* background: rgba(255, 255, 255, 0); */
   color: rgba(255, 255, 255, 0);
   width: 153px;
@@ -8489,7 +8489,7 @@ h3 {
 
 .pay {
   text-align: center;
-  margin-top: 50px;
+  margin-top: 0px;
 }
 
 .nota {
@@ -8508,7 +8508,69 @@ h3 {
   color: white;
 }
 
-text-right {
+.text-right,
+input {
   text-align: right;
+}
+
+.second-options {
+  display: block;
+  margin: 20px 0px;
+  padding: 0;
+}
+
+.interrogation {
+  background-image: url("https://www.colfuturo.org/micredito/images/question.png");
+  width: 15px;
+  height: 14px;
+  display: inline-block;
+}
+
+.interrogation:hover a {
+  display: inline-block;
+}
+
+.wrapper {
+  margin: 10px 0;
+  border: solid 1px;
+  padding: 10px 0px 7px 0;
+}
+
+label.error {
+  font-size: 10px;
+  color: red;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.gray {
+  background: #ccc8c8;
+  color: black;
+  border: solid 1px white;
+}
+
+.yellow {
+  background: gold;
+  border: solid 1px white;
+}
+
+.message-error {
+  color: red;
+}
+
+.color-disabled {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}
+
+.img-pse {
+  background-image: url("/ach/images/Boton PSE-01.png");
+  background-size: 472px 359px;
+  background-position: -135px -98px;
+  width: 100%;
+  height: 147px;
+  display: inline-block;
 }
 
